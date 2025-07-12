@@ -1,19 +1,19 @@
 'use client'
 
+import { zodResolver } from '@hookform/resolvers/zod'
 import Image from 'next/image'
 import Link from 'next/link'
-import { z } from 'zod'
 import { useRouter } from 'next/navigation'
 import { useForm } from 'react-hook-form'
-import { zodResolver } from '@hookform/resolvers/zod'
 import { toast } from 'sonner'
+import { z } from 'zod'
 
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 
 const loginSchema = z.object({
   email: z.string().nonempty('Informe o e-mail').email('E-mail inválido'),
-  password: z.string().nonempty('Informe a senha')
+  password: z.string().nonempty('Informe a senha'),
 })
 
 type LoginSchema = z.infer<typeof loginSchema>
@@ -23,15 +23,15 @@ export default function LoginPage() {
   const {
     register,
     handleSubmit,
-    formState: { errors }
+    formState: { errors },
   } = useForm<LoginSchema>({
-    resolver: zodResolver(loginSchema)
+    resolver: zodResolver(loginSchema),
   })
 
   function handleLogin({ email, password }: LoginSchema) {
     fetch('/api/login', {
       method: 'POST',
-      body: JSON.stringify({ email, password })
+      body: JSON.stringify({ email, password }),
     }).then((response) => {
       if (response.status === 401) {
         toast.error('Email ou senha incorretos')

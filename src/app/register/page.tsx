@@ -1,12 +1,12 @@
 'use client'
 
-import Link from 'next/link'
-import Image from 'next/image'
-import { useRouter } from 'next/navigation'
-import { z } from 'zod'
-import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
+import Image from 'next/image'
+import Link from 'next/link'
+import { useRouter } from 'next/navigation'
+import { useForm } from 'react-hook-form'
 import { toast } from 'sonner'
+import { z } from 'zod'
 
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -21,7 +21,7 @@ const registerSchema = z.object({
   confirmPassword: z
     .string()
     .nonempty('A confirmação da senha é obrigatória')
-    .min(6, 'A senha deve ter pelo menos 6 caracteres')
+    .min(6, 'A senha deve ter pelo menos 6 caracteres'),
 })
 
 type RegisterFormSchema = z.infer<typeof registerSchema>
@@ -31,12 +31,17 @@ export default function RegisterPage() {
   const {
     register,
     handleSubmit,
-    formState: { errors }
+    formState: { errors },
   } = useForm<RegisterFormSchema>({
-    resolver: zodResolver(registerSchema)
+    resolver: zodResolver(registerSchema),
   })
 
-  function handleRegister({ name, email, password, confirmPassword }: RegisterFormSchema) {
+  function handleRegister({
+    name,
+    email,
+    password,
+    confirmPassword,
+  }: RegisterFormSchema) {
     if (password !== confirmPassword) {
       toast.error('Senhas divergentes. Por favor, verifique.')
       return
@@ -45,9 +50,9 @@ export default function RegisterPage() {
     fetch('/api/register', {
       method: 'POST',
       headers: {
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ name, email, password })
+      body: JSON.stringify({ name, email, password }),
     }).then((response) => {
       if (response.ok) {
         toast.success('Cadastro realizado com sucesso!')
@@ -101,7 +106,9 @@ export default function RegisterPage() {
               {...register('confirmPassword')}
             />
             {errors.confirmPassword && (
-              <span className="text-xs text-red-500">{errors.confirmPassword.message}</span>
+              <span className="text-xs text-red-500">
+                {errors.confirmPassword.message}
+              </span>
             )}
           </div>
         </div>

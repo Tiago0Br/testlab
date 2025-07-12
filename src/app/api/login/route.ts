@@ -1,7 +1,7 @@
-import { prisma } from '@/lib/prisma'
-import { NextRequest, NextResponse } from 'next/server'
 import bcrypt from 'bcrypt'
 import { SignJWT } from 'jose'
+import { type NextRequest, NextResponse } from 'next/server'
+import { prisma } from '@/lib/prisma'
 
 interface LoginProps {
   email: string
@@ -13,8 +13,8 @@ export async function POST(request: NextRequest) {
 
   const user = await prisma.user.findFirst({
     where: {
-      email
-    }
+      email,
+    },
   })
 
   if (!user) {
@@ -40,7 +40,7 @@ export async function POST(request: NextRequest) {
     secure: true,
     sameSite: 'lax',
     path: '/',
-    maxAge: 60 * 60 * 24
+    maxAge: 60 * 60 * 24,
   })
 
   return response

@@ -4,11 +4,11 @@ import { Toaster } from '@/components/ui/sonner'
 
 export const metadata: Metadata = {
   title: 'Testlab - Início',
-  description: 'Gerencie seus casos de testes com facilidade e eficiência.'
+  description: 'Gerencie seus casos de testes com facilidade e eficiência.',
 }
 
 export default function RootLayout({
-  children
+  children,
 }: Readonly<{
   children: React.ReactNode
 }>) {
