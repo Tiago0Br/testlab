@@ -7,123 +7,131 @@ import { useRouter } from 'next/navigation'
 import { useForm } from 'react-hook-form'
 import { toast } from 'sonner'
 import { z } from 'zod'
-
 import { Button } from '@/components/ui/button'
+import { Form, FormControl, FormField, FormItem, FormMessage } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
+import { register } from '@/http/register'
 
-const registerSchema = z.object({
-  name: z.string().nonempty('O nome é obrigatório'),
-  email: z.string().email('E-mail inválido'),
-  password: z
-    .string()
-    .nonempty('A senha é obrigatória')
-    .min(6, 'A senha deve ter pelo menos 6 caracteres'),
-  confirmPassword: z
-    .string()
-    .nonempty('A confirmação da senha é obrigatória')
-    .min(6, 'A senha deve ter pelo menos 6 caracteres'),
-})
+const registerSchema = z
+  .object({
+    name: z.string().nonempty('Informe o nome'),
+    email: z.string().nonempty('Informe o e-mail').email('E-mail inválido'),
+    password: z
+      .string()
+      .nonempty('Informe a senha')
+      .min(6, 'A senha deve ter pelo menos 6 caracteres'),
+    confirmPassword: z.string().nonempty('Informe a confirmação da senha'),
+  })
+  .refine((data) => data.password === data.confirmPassword, {
+    message: 'As senhas não coincidem',
+    path: ['confirmPassword'],
+  })
 
 type RegisterFormSchema = z.infer<typeof registerSchema>
 
 export default function RegisterPage() {
   const router = useRouter()
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-  } = useForm<RegisterFormSchema>({
+  const form = useForm<RegisterFormSchema>({
     resolver: zodResolver(registerSchema),
+    defaultValues: {
+      name: '',
+      email: '',
+      password: '',
+      confirmPassword: '',
+    },
   })
 
-  function handleRegister({
-    name,
-    email,
-    password,
-    confirmPassword,
-  }: RegisterFormSchema) {
-    if (password !== confirmPassword) {
-      toast.error('Senhas divergentes. Por favor, verifique.')
-      return
+  async function handleRegister({ name, email, password }: RegisterFormSchema) {
+    const response = await register({ name, email, password })
+    if (response.ok) {
+      toast.success('Cadastro realizado com sucesso!')
+      router.push('/login')
+    } else {
+      toast.error('Ocorreu um erro ao realizar o cadastro.')
     }
-
-    fetch('/api/register', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ name, email, password }),
-    }).then((response) => {
-      if (response.ok) {
-        toast.success('Cadastro realizado com sucesso!')
-        router.push('/login')
-      } else {
-        toast.error('Ocorreu um erro ao realizar o cadastro.')
-      }
-    })
   }
 
   return (
     <div className="min-h-screen flex flex-col justify-center items-center">
-      <form
-        method="POST"
-        onSubmit={handleSubmit(handleRegister)}
-        className="w-[390px] flex flex-col items-center bg-zinc-900 rounded-lg border py-8 px-12 gap-6"
-      >
-        <div className="flex flex-col items-center gap-4">
-          <Image
-            src="/testlab-logo.png"
-            width={80}
-            height={80}
-            alt="Logo do projeto Testlab"
-            draggable={false}
-          />
-          <h1 className="text-2xl">Cadastre-se</h1>
-        </div>
-        <div className="w-full flex flex-col gap-3">
-          <div className="space-y-0">
-            <Input placeholder="Nome" {...register('name')} />
-            {errors.name && (
-              <span className="text-xs text-red-500">{errors.name.message}</span>
-            )}
-          </div>
-          <div>
-            <Input type="email" placeholder="Email" {...register('email')} />
-            {errors.email && (
-              <span className="text-xs text-red-500">{errors.email.message}</span>
-            )}
-          </div>
-          <div>
-            <Input type="password" placeholder="Senha" {...register('password')} />
-            {errors.password && (
-              <span className="text-xs text-red-500">{errors.password.message}</span>
-            )}
-          </div>
-          <div>
-            <Input
-              type="password"
-              placeholder="Confirmar senha"
-              {...register('confirmPassword')}
+      <Form {...form}>
+        <form
+          method="POST"
+          onSubmit={form.handleSubmit(handleRegister)}
+          className="w-[390px] flex flex-col items-center bg-zinc-900 rounded-lg border py-8 px-12 gap-6"
+        >
+          <div className="flex flex-col items-center gap-4">
+            <Image
+              src="/testlab-logo.png"
+              width={80}
+              height={80}
+              alt="Logo do projeto Testlab"
+              draggable={false}
             />
-            {errors.confirmPassword && (
-              <span className="text-xs text-red-500">
-                {errors.confirmPassword.message}
-              </span>
-            )}
+            <h1 className="text-2xl">Cadastre-se</h1>
           </div>
-        </div>
+          <div className="w-full flex flex-col gap-3">
+            <FormField
+              control={form.control}
+              name="name"
+              render={({ field }) => (
+                <FormItem>
+                  <FormControl>
+                    <Input placeholder="Nome" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="email"
+              render={({ field }) => (
+                <FormItem>
+                  <FormControl>
+                    <Input placeholder="E-mail" autoComplete="email" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="password"
+              render={({ field }) => (
+                <FormItem>
+                  <FormControl>
+                    <Input placeholder="Senha" type="password" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="confirmPassword"
+              render={({ field }) => (
+                <FormItem>
+                  <FormControl>
+                    <Input placeholder="Confirmar Senha" type="password" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </div>
 
-        <Button type="submit" className="w-full uppercase">
-          Cadastrar
-        </Button>
+          <Button type="submit" className="w-full uppercase">
+            Cadastrar
+          </Button>
 
-        <span className="text-sm">
-          Já possui conta?{' '}
-          <Link className="underline" href="/login">
-            Login
-          </Link>
-        </span>
-      </form>
+          <span className="text-sm">
+            Já possui conta?{' '}
+            <Link className="underline" href="/login">
+              Login
+            </Link>
+          </span>
+        </form>
+      </Form>
     </div>
   )
 }

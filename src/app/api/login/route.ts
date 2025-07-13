@@ -1,15 +1,16 @@
 import bcrypt from 'bcrypt'
 import { SignJWT } from 'jose'
 import { type NextRequest, NextResponse } from 'next/server'
+import { env } from '@/env'
 import { prisma } from '@/lib/prisma'
 
-interface LoginProps {
+export interface LoginRequestBody {
   email: string
   password: string
 }
 
 export async function POST(request: NextRequest) {
-  const { email, password } = (await request.json()) as LoginProps
+  const { email, password } = (await request.json()) as LoginRequestBody
 
   const user = await prisma.user.findFirst({
     where: {
@@ -31,7 +32,7 @@ export async function POST(request: NextRequest) {
     .setProtectedHeader({ alg: 'HS256' })
     .setIssuedAt()
     .setExpirationTime('2h')
-    .sign(new TextEncoder().encode(process.env.JWT_SECRET!))
+    .sign(new TextEncoder().encode(env.JWT_SECRET))
 
   const response = NextResponse.json({ user }, { status: 200 })
 

@@ -2,14 +2,14 @@ import bcrypt from 'bcrypt'
 import { type NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 
-interface RegisterRequest {
+export interface RegisterRequestBody {
   name: string
   email: string
   password: string
 }
 
 export async function POST(request: NextRequest) {
-  const { name, email, password } = (await request.json()) as RegisterRequest
+  const { name, email, password } = (await request.json()) as RegisterRequestBody
 
   const userAlreadyExists = await prisma.user.findFirst({
     where: {
@@ -18,7 +18,7 @@ export async function POST(request: NextRequest) {
   })
 
   if (userAlreadyExists) {
-    return NextResponse.json({ error: 'User already exists' }, { status: 400 })
+    return NextResponse.json({ error: 'Email já cadastrado' }, { status: 400 })
   }
 
   await prisma.user.create({
@@ -29,5 +29,5 @@ export async function POST(request: NextRequest) {
     },
   })
 
-  return NextResponse.json({ message: 'User created successfully' }, { status: 201 })
+  return NextResponse.json({ message: 'Usuário criado com sucesso' }, { status: 201 })
 }
