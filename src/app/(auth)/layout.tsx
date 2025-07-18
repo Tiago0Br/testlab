@@ -1,23 +1,25 @@
-import { jwtVerify } from 'jose'
-import { cookies } from 'next/headers'
 import { redirect } from 'next/navigation'
+import { getLoggedUser } from '@/actions/get-logged-user'
+import { Header } from '@/components/header'
+import { UserProvider } from '@/contexts/user-context'
 
 export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode
 }>) {
-  const token = (await cookies()).get('testlab-user-token')
-
-  if (!token) {
-    redirect('/login')
-  }
-
   try {
-    await jwtVerify(token.value, new TextEncoder().encode(process.env.JWT_SECRET!))
-  } catch (error) {
+    const user = await getLoggedUser()
+
+    return (
+      <UserProvider user={user}>
+        <div className="flex flex-col w-full">
+          <Header />
+          {children}
+        </div>
+      </UserProvider>
+    )
+  } catch {
     redirect('/login')
   }
-
-  return children
 }
