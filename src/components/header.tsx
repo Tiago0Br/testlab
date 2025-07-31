@@ -1,5 +1,10 @@
+'use client'
+
 import { LogOutIcon, UserRoundPenIcon } from 'lucide-react'
 import Link from 'next/link'
+import { redirect } from 'next/navigation'
+import { logout } from '@/actions/logout'
+import { Button } from './ui/button'
 import {
   NavigationMenu,
   NavigationMenuItem,
@@ -8,6 +13,11 @@ import {
 } from './ui/navigation-menu'
 
 export function Header() {
+  async function handleLogout() {
+    await logout()
+    redirect('/login')
+  }
+
   return (
     <header className="py-4 px-30 flex justify-between">
       <div className="text-2xl font-bold">
@@ -30,12 +40,16 @@ export function Header() {
           </NavigationMenuItem>
           <NavigationMenuItem>
             <NavigationMenuLink asChild>
-              <Link href="/">
+              <Button
+                variant="link"
+                className="text-foreground hover:no-underline"
+                onClick={handleLogout}
+              >
                 <span className="flex items-center gap-2">
                   <LogOutIcon />
                   Sair
                 </span>
-              </Link>
+              </Button>
             </NavigationMenuLink>
           </NavigationMenuItem>
         </NavigationMenuList>

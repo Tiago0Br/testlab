@@ -2,6 +2,7 @@ import bcrypt from 'bcrypt'
 import { SignJWT } from 'jose'
 import { type NextRequest, NextResponse } from 'next/server'
 import { env } from '@/env'
+import { setUserTokenCookie } from '@/lib/cookies'
 import { prisma } from '@/lib/prisma'
 
 export interface LoginRequestBody {
@@ -36,13 +37,7 @@ export async function POST(request: NextRequest) {
 
   const response = NextResponse.json({ user }, { status: 200 })
 
-  response.cookies.set('testlab-user-token', token, {
-    httpOnly: true,
-    secure: true,
-    sameSite: 'lax',
-    path: '/',
-    maxAge: 60 * 60 * 24,
-  })
+  setUserTokenCookie(response, token)
 
   return response
 }

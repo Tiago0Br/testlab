@@ -1,12 +1,12 @@
 'use server'
 
 import { jwtVerify } from 'jose'
-import { cookies } from 'next/headers'
 import { env } from '@/env'
+import { getUserTokenCookie } from '@/lib/cookies'
 import { prisma } from '@/lib/prisma'
 
 export async function getLoggedUser() {
-  const token = (await cookies()).get('testlab-user-token')
+  const token = await getUserTokenCookie()
 
   if (!token) {
     throw new Error('User not authenticated')
