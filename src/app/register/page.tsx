@@ -10,6 +10,7 @@ import { z } from 'zod'
 import { Button } from '@/components/ui/button'
 import { Form, FormControl, FormField, FormItem, FormMessage } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
+import { PasswordInput } from '@/components/ui/password-input'
 import { register } from '@/http/register'
 
 const registerSchema = z
@@ -100,7 +101,7 @@ export default function RegisterPage() {
               render={({ field }) => (
                 <FormItem>
                   <FormControl>
-                    <Input placeholder="Senha" type="password" {...field} />
+                    <PasswordInput placeholder="Senha" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -112,7 +113,7 @@ export default function RegisterPage() {
               render={({ field }) => (
                 <FormItem>
                   <FormControl>
-                    <Input placeholder="Confirmar Senha" type="password" {...field} />
+                    <PasswordInput placeholder="Confirmar Senha" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
