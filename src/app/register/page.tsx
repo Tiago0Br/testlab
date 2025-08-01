@@ -4,6 +4,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import Image from 'next/image'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
+import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { toast } from 'sonner'
 import { z } from 'zod'
@@ -31,6 +32,7 @@ const registerSchema = z
 type RegisterFormSchema = z.infer<typeof registerSchema>
 
 export default function RegisterPage() {
+  const [isLoading, setIsLoading] = useState(false)
   const router = useRouter()
   const form = useForm<RegisterFormSchema>({
     resolver: zodResolver(registerSchema),
@@ -43,6 +45,7 @@ export default function RegisterPage() {
   })
 
   async function handleRegister({ name, email, password }: RegisterFormSchema) {
+    setIsLoading(true)
     const response = await register({ name, email, password })
     if (response.ok) {
       toast.success('Cadastro realizado com sucesso!')
@@ -50,6 +53,7 @@ export default function RegisterPage() {
     } else {
       toast.error('Ocorreu um erro ao realizar o cadastro.')
     }
+    setIsLoading(false)
   }
 
   return (
@@ -77,7 +81,7 @@ export default function RegisterPage() {
               render={({ field }) => (
                 <FormItem>
                   <FormControl>
-                    <Input placeholder="Nome" {...field} />
+                    <Input placeholder="Nome" {...field} disabled={isLoading} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -89,7 +93,12 @@ export default function RegisterPage() {
               render={({ field }) => (
                 <FormItem>
                   <FormControl>
-                    <Input placeholder="E-mail" autoComplete="email" {...field} />
+                    <Input
+                      placeholder="E-mail"
+                      autoComplete="email"
+                      {...field}
+                      disabled={isLoading}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -101,7 +110,7 @@ export default function RegisterPage() {
               render={({ field }) => (
                 <FormItem>
                   <FormControl>
-                    <PasswordInput placeholder="Senha" {...field} />
+                    <PasswordInput placeholder="Senha" {...field} disabled={isLoading} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -113,7 +122,11 @@ export default function RegisterPage() {
               render={({ field }) => (
                 <FormItem>
                   <FormControl>
-                    <PasswordInput placeholder="Confirmar Senha" {...field} />
+                    <PasswordInput
+                      placeholder="Confirmar Senha"
+                      {...field}
+                      disabled={isLoading}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -121,7 +134,7 @@ export default function RegisterPage() {
             />
           </div>
 
-          <Button type="submit" className="w-full uppercase">
+          <Button type="submit" className="w-full uppercase" disabled={isLoading}>
             Cadastrar
           </Button>
 

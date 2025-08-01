@@ -24,9 +24,9 @@ const PasswordInput = forwardRef<HTMLInputElement, PasswordInputProps>(
           onClick={() => setShowPassword((state) => !state)}
         >
           {showPassword ? (
-            <EyeOffIcon className="text-muted-foreground" />
+            <EyeIcon className="text-muted-foreground size-5" />
           ) : (
-            <EyeIcon className="text-muted-foreground" />
+            <EyeOffIcon className="text-muted-foreground size-5" />
           )}
         </button>
       </div>

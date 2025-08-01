@@ -1,6 +1,7 @@
 'use client'
 
 import { LogOutIcon, UserRoundPenIcon } from 'lucide-react'
+import Image from 'next/image'
 import Link from 'next/link'
 import { redirect } from 'next/navigation'
 import { logout } from '@/actions/logout'
@@ -21,9 +22,14 @@ export function Header() {
   return (
     <header className="py-4 px-30 flex justify-between">
       <div className="text-2xl font-bold">
-        <Link href="/">
-          <span className="text-rose-500">Test</span>
-          <span className="text-green-500">Lab</span>
+        <Link href="/" draggable={false}>
+          <Image
+            src="/testlab-banner.png"
+            alt="Testlab Banner"
+            width={200}
+            height={50}
+            draggable={false}
+          />
         </Link>
       </div>
       <NavigationMenu viewport={false}>

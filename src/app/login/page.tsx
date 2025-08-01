@@ -4,6 +4,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import Image from 'next/image'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
+import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { toast } from 'sonner'
 import { z } from 'zod'
@@ -22,6 +23,7 @@ type LoginSchema = z.infer<typeof loginSchema>
 
 export default function LoginPage() {
   const router = useRouter()
+  const [isLoading, setIsLoading] = useState(false)
   const form = useForm<LoginSchema>({
     resolver: zodResolver(loginSchema),
     defaultValues: {
@@ -31,18 +33,23 @@ export default function LoginPage() {
   })
 
   async function handleLogin({ email, password }: LoginSchema) {
-    const response = await login({ email, password })
-    if (response.status === 401) {
-      toast.error('Email ou senha incorretos')
-    }
+    setIsLoading(true)
+    try {
+      const response = await login({ email, password })
+      if (response.status === 401) {
+        toast.error('Email ou senha incorretos')
+      }
 
-    if (response.status === 500) {
-      toast.error('Ocorreu um erro ao realizar o login.')
-    }
+      if (response.status === 500) {
+        toast.error('Ocorreu um erro ao realizar o login.')
+      }
 
-    if (response.ok) {
-      toast.success('Login realizado com sucesso!')
-      router.push('/')
+      if (response.ok) {
+        toast.success('Login realizado com sucesso!')
+        router.push('/')
+      }
+    } finally {
+      setIsLoading(false)
     }
   }
 
@@ -71,7 +78,12 @@ export default function LoginPage() {
               render={({ field }) => (
                 <FormItem>
                   <FormControl>
-                    <Input placeholder="Email" autoComplete="email" {...field} />
+                    <Input
+                      placeholder="Email"
+                      autoComplete="email"
+                      disabled={isLoading}
+                      {...field}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -83,7 +95,7 @@ export default function LoginPage() {
               render={({ field }) => (
                 <FormItem>
                   <FormControl>
-                    <PasswordInput placeholder="Senha" {...field} />
+                    <PasswordInput placeholder="Senha" disabled={isLoading} {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -91,7 +103,7 @@ export default function LoginPage() {
             />
           </div>
 
-          <Button type="submit" className="w-full uppercase">
+          <Button type="submit" className="w-full uppercase" disabled={isLoading}>
             Entrar
           </Button>
 
