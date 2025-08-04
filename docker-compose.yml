@@ -1,12 +1,14 @@
 services:
   testlab-pg:
+    container_name: testlab-pg
+    restart: unless-stopped
     image: postgres
     environment:
       POSTGRES_USER: ${DB_USER}
       POSTGRES_PASSWORD: ${DB_PASSWORD}
       POSTGRES_DB: testlab
     ports:
-      - 5432:5432
+      - ${DB_PORT}:5432
     volumes:
       - db_data:/var/lib/postgresql/data
 
