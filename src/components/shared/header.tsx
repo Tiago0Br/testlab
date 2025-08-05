@@ -5,13 +5,13 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { redirect } from 'next/navigation'
 import { logout } from '@/actions/logout'
-import { Button } from './ui/button'
+import { Button } from '../ui/button'
 import {
   NavigationMenu,
   NavigationMenuItem,
   NavigationMenuLink,
   NavigationMenuList,
-} from './ui/navigation-menu'
+} from '../ui/navigation-menu'
 
 export function Header() {
   async function handleLogout() {

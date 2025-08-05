@@ -1,6 +1,6 @@
 import { redirect } from 'next/navigation'
 import { getLoggedUser } from '@/actions/get-logged-user'
-import { Header } from '@/components/header'
+import { Header } from '@/components/shared/header'
 import { UserProvider } from '@/contexts/user-context'
 
 export default async function RootLayout({
